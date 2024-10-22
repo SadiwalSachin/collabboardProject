@@ -5,7 +5,7 @@ interface ProtectedRouteProps {
     component : FC
 }
 
-const ProtectedRoute:FC<ProtectedRouteProps> = ({component:Component}) => {
+const ProtectedRoute:React.FC<ProtectedRouteProps> = ({component:Component}) => {
     // const isLogin = UseAuth()
     // console.log(isLogin);
     
