@@ -1,17 +1,17 @@
 // import UseAuth from "../hooks/useAuth"
-import { FC } from "react"
+import React from "react"
 
 interface ProtectedRouteProps {
-    component : FC
+    children: React.ReactNode;
 }
 
-const ProtectedRoute:React.FC<ProtectedRouteProps> = ({component:Component}) => {
+const ProtectedRoute:React.FC<ProtectedRouteProps> = ({children}) => {
     // const isLogin = UseAuth()
     // console.log(isLogin);
     
   return ( 
     <>
-  {Component} 
+  {children} 
     </>
 )
   

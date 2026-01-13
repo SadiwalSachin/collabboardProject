@@ -4,7 +4,7 @@ const hostDataSclice = createSlice({
     name:"hostData",
     initialState:{},
     reducers:{
-        setHostData : function(state,action){
+        setHostData : function(_state,action){
             return action.payload
         }}
     }

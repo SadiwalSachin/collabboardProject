@@ -1,16 +1,32 @@
 import Keycloak from "keycloak-js"
 import { useEffect, useState, useRef } from "react"
 
+interface AuthState {
+  isLoggedIn: boolean;
+  isLoading: boolean;
+  error: string | null;
+}
+
 const client = new Keycloak({
     url:import.meta.env.VITE_KEYLOAK_URL,
     realm:import.meta.env.VITE_KEYLOAK_REALM,
     clientId:import.meta.env.VITE_KEYLOAK_CLIENT_ID,
 })
 
-const UseAuth = ():boolean => {
-    const isRun = useRef<boolean>()
-    const [isLoggedIn,setIsLoggedIn] = useState<boolean>()
+export const login = () => {
+  client.login();
+};
 
+export const logout = () => {
+  client.logout();
+};
+
+export const register = () => {
+  client.register();
+};
+
+const UseAuth = (): AuthState => {
+    const isRun = useRef<boolean>()
     const [authState, setAuthState] = useState<AuthState>({
         isLoggedIn: false,
         isLoading: true,
@@ -22,9 +38,9 @@ const UseAuth = ():boolean => {
         
         if(isRun.current) return
         isRun.current = true;
-        const login = async () => {
+        const initAuth = async () => {
             try {
-              const authenticated = await client.init({ onLoad: "login-required" });
+              const authenticated = await client.init({ onLoad: "check-sso" }); // Changed to check-sso to not force login
               console.log(authenticated);
               setAuthState({
                 isLoggedIn: authenticated,
@@ -43,12 +59,11 @@ const UseAuth = ():boolean => {
             }
           };
       
-          login();
-          console.log(authState);
+          initAuth();
           
     },[])
 
-  return isLoggedIn
+  return authState;
 }
 
 export default UseAuth

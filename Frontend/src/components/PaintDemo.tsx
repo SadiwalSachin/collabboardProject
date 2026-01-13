@@ -87,6 +87,8 @@ export const PaintDemo: React.FC<PaintProps> = React.memo(function Paint({}) {
             ...prevScribbles,
             {
               id,
+              x,
+              y,
               points: [x, y],
               color,
             },
@@ -125,6 +127,8 @@ export const PaintDemo: React.FC<PaintProps> = React.memo(function Paint({}) {
             ...prevArrows,
             {
               id,
+              x,
+              y,
               points: [x, y, x, y],
               color,
             },
@@ -347,7 +351,7 @@ export const PaintDemo: React.FC<PaintProps> = React.memo(function Paint({}) {
                 draggable={isDraggable}
               />
             )}
-            {rectangles?.map((rectangle, index) => (
+            {rectangles?.map((rectangle, _index) => (
               <KonvaRect
                 key={rectangle.id}
                 x={rectangle?.x}
