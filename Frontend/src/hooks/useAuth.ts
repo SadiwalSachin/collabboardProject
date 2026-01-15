@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { onAuthStateChanged, User, getIdToken } from 'firebase/auth';
+import { onAuthStateChanged, getIdToken } from 'firebase/auth';
 import { auth } from '../config/firebase';
 
 interface AuthState {

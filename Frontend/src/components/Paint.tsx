@@ -37,7 +37,6 @@ import {
   LuClock,
   LuSettings,
   LuDownload,
-  LuUpload,
   LuUndo2,
   LuRedo2,
   LuTrash2,
@@ -73,8 +72,6 @@ const SIZE = 500;
 
 const SidebarItem = ({ icon: Icon, label, active = false, onClick }: { icon: any, label: string, active?: boolean, onClick?: () => void }) => {
   const activeBg = useColorModeValue('blue.50', 'blue.900');
-  const activeColor = useColorModeValue('blue.600', 'blue.300');
-  const hoverBg = useColorModeValue('gray.50', 'whiteAlpha.100');
   const textColor = useColorModeValue('gray.600', 'gray.400');
   const activeTextColor = useColorModeValue('blue.600', 'blue.200');
 
@@ -347,9 +344,6 @@ export const Paint: React.FC = React.memo(function Paint() {
     addToHistory({ scribbles: [], image: undefined });
   }, [emitWhiteboardAction, addToHistory]);
 
-  const onImportImageClick = useCallback(() => {
-    fileRef?.current && fileRef?.current?.click();
-  }, []);
 
   const onExportClick = useCallback(() => {
     const dataUri = stageRef?.current?.toDataURL({ pixelRatio: 3 });
@@ -401,19 +395,12 @@ export const Paint: React.FC = React.memo(function Paint() {
     });
   }, []);
 
-  const [lastCenter, setLastCenter] = useState<any>(null);
   const [lastDist, setLastDist] = useState(0);
 
   const getDistance = (p1: any, p2: any) => {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
   };
 
-  const getCenter = (p1: any, p2: any) => {
-    return {
-      x: (p1.x + p2.x) / 2,
-      y: (p1.y + p2.y) / 2,
-    };
-  };
 
   const handleTouchMove = useCallback((e: KonvaEventObject<TouchEvent>) => {
     // Pinch to zoom
@@ -430,12 +417,14 @@ export const Paint: React.FC = React.memo(function Paint() {
 
       if (!lastDist) {
         setLastDist(getDistance(p1, p2));
-        setLastCenter(getCenter(p1, p2));
         return;
       }
 
       const dist = getDistance(p1, p2);
-      const center = getCenter(p1, p2);
+      const center = {
+        x: (p1.x + p2.x) / 2,
+        y: (p1.y + p2.y) / 2,
+      };
 
       const stage = stageRef.current;
       if (!stage) return;
@@ -458,7 +447,6 @@ export const Paint: React.FC = React.memo(function Paint() {
       });
 
       setLastDist(dist);
-      setLastCenter(center);
     } else {
       onStageMouseMove(e);
     }
@@ -466,7 +454,6 @@ export const Paint: React.FC = React.memo(function Paint() {
 
   const handleTouchEnd = useCallback(() => {
     setLastDist(0);
-    setLastCenter(null);
     onStageMouseUp();
   }, [onStageMouseUp]);
 

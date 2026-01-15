@@ -27,10 +27,6 @@ import {
     Modal,
     ModalOverlay,
     ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
-    ModalCloseButton,
     Button,
     FormControl,
     FormLabel,
@@ -48,7 +44,6 @@ import {
     TabPanels,
     Tab,
     TabPanel,
-    useColorMode,
     useColorModeValue
 } from '@chakra-ui/react';
 
@@ -57,7 +52,6 @@ const ENDPOINT = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 const SidebarItem = ({ icon: Icon, label, active = false, onClick }: { icon: any, label: string, active?: boolean, onClick?: () => void }) => {
     const activeBg = useColorModeValue('blue.50', 'blue.900');
     const activeColor = useColorModeValue('blue.600', 'blue.300');
-    const hoverBg = useColorModeValue('gray.50', 'whiteAlpha.100');
     const inactiveColor = useColorModeValue('gray.600', 'gray.400');
 
     return (
@@ -140,7 +134,7 @@ const Dashboard: React.FC = () => {
     const navigate = useNavigate();
     const toast = useToast();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const { user, isLoading: isAuthLoading, getIdToken } = useAuth();
+    const { user, getIdToken } = useAuth();
     const { isOpen, onOpen: onOpenModal, onClose } = useDisclosure();
 
     const [tabIndex, setTabIndex] = useState(0);
