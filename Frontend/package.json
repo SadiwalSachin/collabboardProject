@@ -16,6 +16,7 @@
     "@reduxjs/toolkit": "^2.3.0",
     "axios": "^1.7.7",
     "bootstrap": "^5.0.0",
+    "firebase": "^12.7.0",
     "framer-motion": "^11.11.9",
     "keycloak-js": "^26.0.1",
     "konva": "^9.3.15",

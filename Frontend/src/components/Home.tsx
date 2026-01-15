@@ -2,11 +2,28 @@ import Cards from "./Cards";
 import Navbar from "./Navbar";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaGithub } from "react-icons/fa";
-import heroImg from "../assets/hero.png";
 import { useState } from "react";
 import CreateRoom from "./CreateRoom";
 import JoinRoom from "./JoinRoom";
 import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+import {
+  useToast,
+  Box,
+  Container,
+  Heading,
+  Text,
+  Button,
+  Stack,
+  Flex,
+  useColorModeValue,
+  Icon,
+  Badge
+} from "@chakra-ui/react";
+import { LuSparkles, LuChevronRight } from "react-icons/lu";
+
+// Use the generated image path (Antigravity will handle the path transformation)
+import futuristicHero from "../assets/hero.png"; // Keeping import name for simplicity, will update if needed
 
 interface HomeProps {
   socket: any;
@@ -15,62 +32,126 @@ interface HomeProps {
 const Home: React.FC<HomeProps> = ({ socket }) => {
   const [showAction, setShowAction] = useState<"create" | "join" | null>(null);
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
+  const toast = useToast();
+
+  const bg = useColorModeValue("white", "#0f172a");
+  const textColor = useColorModeValue("gray.900", "white");
+  const subTextColor = useColorModeValue("gray.600", "gray.400");
+  const secondaryBg = useColorModeValue("gray.50", "whiteAlpha.50");
+
+  const handleAction = (path: string) => {
+    if (!isLoggedIn) {
+      toast({
+        title: "Authentication Required",
+        description: "Please login to create or access boards.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      navigate("/login");
+    } else {
+      navigate(path);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-white font-sans overflow-x-hidden">
+    <Box minH="100vh" bg={bg} overflowX="hidden" className="font-sans">
       <Navbar />
 
+      {/* Decorative Background Elements */}
+      <Box position="absolute" top="-10%" right="-10%" w="600px" h="600px" bg="blue.500" filter="blur(150px)" opacity={useColorModeValue(0.05, 0.1)} borderRadius="full" pointerEvents="none" />
+      <Box position="absolute" bottom="10%" left="-5%" w="400px" h="400px" bg="purple.500" filter="blur(120px)" opacity={useColorModeValue(0.05, 0.1)} borderRadius="full" pointerEvents="none" />
+
       {/* Hero Section */}
-      <section className="container mx-auto px-6 md:px-24 pt-16 md:pt-24 pb-24">
-        <div className="flex flex-col md:flex-row items-center gap-12">
-          {/* Hero Content */}
-          <div className="flex-1 text-left min-h-[450px] flex flex-col justify-center">
+      <Container maxW="container.xl" pt={{ base: 12, md: 24 }} pb={20}>
+        <Stack direction={{ base: "column", lg: "row" }} spacing={12} align="center">
+
+          {/* Content Left */}
+          <Flex flex={1} direction="column" zIndex={1}>
             <AnimatePresence mode="wait">
               {!showAction ? (
                 <motion.div
                   key="hero-text"
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.4 }}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -30 }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
                 >
-                  <h1 className="text-5xl md:text-6xl font-extrabold text-[#1a1a1a] leading-tight mb-6">
-                    Real-time<br />Collaborative<br />Whiteboard
-                  </h1>
-                  <p className="text-lg text-gray-500 mb-10 max-w-md">
-                    Draw, write, brainstorm together in real time.
-                  </p>
+                  <Badge
+                    px={3} py={1} mb={6} borderRadius="full" colorScheme="blue" variant="subtle"
+                    display="inline-flex" alignItems="center" gap={2}
+                  >
+                    <Icon as={LuSparkles} />
+                    <Text fontSize="xs" fontWeight="bold" letterSpacing="wider">NEXT-GEN COLLABORATION</Text>
+                  </Badge>
 
-                  <div className="flex flex-wrap gap-4">
-                    <button
-                      onClick={() => navigate("/dashboard")}
-                      className="bg-blue-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200"
+                  <Heading
+                    fontSize={{ base: "4xl", md: "6xl", lg: "7xl" }}
+                    fontWeight="800"
+                    lineHeight="1.1"
+                    mb={6}
+                    color={textColor}
+                    letterSpacing="tight"
+                  >
+                    Visualize Ideas in <br />
+                    <Text as="span" bgGradient="linear(to-r, blue.400, purple.500)" bgClip="text">
+                      Real-Time.
+                    </Text>
+                  </Heading>
+
+                  <Text fontSize={{ base: "lg", md: "xl" }} color={subTextColor} mb={10} maxW="500px">
+                    The ultra-fast collaborative whiteboard for modern teams to brainstorm, design, and build together.
+                  </Text>
+
+                  <Stack direction={{ base: "column", sm: "row" }} spacing={4}>
+                    <Button
+                      size="lg"
+                      colorScheme="blue"
+                      h="60px"
+                      px={10}
+                      borderRadius="2xl"
+                      fontSize="md"
+                      fontWeight="bold"
+                      boxShadow="0 20px 40px -10px rgba(66, 153, 225, 0.4)"
+                      _hover={{ transform: 'translateY(-2px)', boxShadow: '0 25px 50px -12px rgba(66, 153, 225, 0.5)' }}
+                      rightIcon={<LuChevronRight />}
+                      onClick={() => handleAction("/dashboard")}
                     >
-                      Create a Board
-                    </button>
-                    <button
-                      onClick={() => navigate("/dashboard")}
-                      className="bg-gray-100 text-[#1a1a1a] px-8 py-4 rounded-xl font-bold hover:bg-gray-200 transition-colors"
+                      Start Drawing
+                    </Button>
+                    <Button
+                      size="lg"
+                      variant="ghost"
+                      h="60px"
+                      px={10}
+                      borderRadius="2xl"
+                      fontSize="md"
+                      fontWeight="bold"
+                      color={textColor}
+                      _hover={{ bg: secondaryBg }}
+                      onClick={() => handleAction("/dashboard")}
                     >
                       Try as Guest
-                    </button>
-                  </div>
+                    </Button>
+                  </Stack>
                 </motion.div>
               ) : (
                 <motion.div
                   key="action-form"
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.4 }}
-                  className="w-full max-w-md"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className={`w-full max-w-md p-10 backdrop-blur-xl ${useColorModeValue('bg-white/80', 'gray.800/80')} border-2 ${useColorModeValue('border-white', 'whiteAlpha.100')} rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] overflow-hidden`}
                 >
-                  <button
+                  <Button
+                    variant="link"
+                    color="blue.500"
+                    mb={6}
                     onClick={() => setShowAction(null)}
-                    className="text-blue-600 font-semibold mb-6 flex items-center gap-2 hover:underline"
                   >
                     ← Back to Home
-                  </button>
+                  </Button>
                   {showAction === "create" ? (
                     <CreateRoom socket={socket} />
                   ) : (
@@ -79,73 +160,92 @@ const Home: React.FC<HomeProps> = ({ socket }) => {
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
+          </Flex>
 
-          {/* Hero Image */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            className="flex-1 w-full cursor-pointer hover:scale-105 transition-transform duration-500"
-            onClick={() => navigate("/dashboard")}
-          >
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl border-8 border-white">
-              <img
-                src={heroImg}
-                alt="Whiteboard Preview"
-                className="w-full h-auto object-cover"
-              />
-            </div>
-          </motion.div>
-        </div>
-      </section>
+          {/* Visual Right */}
+          <Flex flex={1.2} w="full" position="relative">
+            <motion.div
+              initial={{ opacity: 0, x: 50, scale: 0.9 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              style={{ width: '100%' }}
+            >
+              <Box
+                position="relative"
+                borderRadius="3xl"
+                overflow="hidden"
+                boxShadow="2xl"
+                borderWidth="1px"
+                borderColor={useColorModeValue("white", "whiteAlpha.200")}
+              >
+                <Box position="absolute" inset={0} bgGradient="linear(to-tr, blue.500, transparent)" opacity={0.2} pointerEvents="none" />
+                <img
+                  src={futuristicHero}
+                  alt="Futuristic Board Preview"
+                  className="w-full h-auto"
+                />
+              </Box>
 
-      {/* Features Section */}
-      <section className="bg-white py-24 border-t border-gray-50">
-        <div className="container mx-auto px-6 md:px-24">
-          <div className="text-center mb-16">
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-4xl font-bold text-[#1a1a1a] mb-4"
+              {/* Floating Elements for futuristic feel */}
+              <motion.div
+                animate={{ y: [0, -15, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                style={{ position: 'absolute', top: '-20px', right: '20px', zIndex: 2 }}
+              >
+                <Box bg={secondaryBg} backdropFilter="blur(10px)" px={4} py={3} borderRadius="2xl" boxShadow="xl" border="1px solid" borderColor={useColorModeValue("whiteAlpha.800", "whiteAlpha.100")}>
+                  <Flex align="center" gap={3}>
+                    <Box w={2} h={2} bg="green.400" borderRadius="full" />
+                    <Text fontSize="xs" fontWeight="bold" color={textColor}>5 Users Collaborating</Text>
+                  </Flex>
+                </Box>
+              </motion.div>
+            </motion.div>
+          </Flex>
+        </Stack>
+      </Container>
+
+      {/* Features Showcase */}
+      <Box bg={secondaryBg} py={24}>
+        <Container maxW="container.xl">
+          <Flex direction="column" align="center" textAlign="center" mb={16}>
+            <Badge
+              px={3} py={1} mb={4} borderRadius="full" colorScheme="purple" variant="subtle"
             >
-              Features
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-gray-500 max-w-2xl mx-auto"
-            >
-              Everything you need for seamless collaboration, built with modern technology for a fast and reliable experience.
-            </motion.p>
-          </div>
+              FEATURES
+            </Badge>
+            <Heading fontSize={{ base: "3xl", md: "4xl" }} fontWeight="800" color={textColor} mb={4}>
+              Everything You Need to Create.
+            </Heading>
+            <Text color={subTextColor} maxW="600px">
+              Built with the latest technologies to ensure your ideas move as fast as your mind.
+              Real-time updates, secure cloud storage, and intuitive tools.
+            </Text>
+          </Flex>
 
           <Cards />
-        </div>
-      </section>
+        </Container>
+      </Box>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-gray-100">
-        <div className="container mx-auto px-6 md:px-24 text-center">
-          <div className="flex justify-center mb-8">
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-400 hover:text-gray-900 transition-colors text-3xl"
-            >
-              <FaGithub />
-            </a>
-          </div>
-          <p className="text-gray-400 text-sm">
-            © 2024 Boardify. Built with Next.js, Tailwind CSS, and Liveblocks.
-          </p>
-        </div>
-      </footer>
-    </div>
+      <Box as="footer" py={20} borderTop="1px solid" borderColor={useColorModeValue("gray.100", "whiteAlpha.100")}>
+        <Container maxW="container.xl">
+          <Flex direction={{ base: "column", md: "row" }} justify="space-between" align="center" gap={8}>
+            <Flex align="center" gap={2}>
+              <Box w="6" h="6" bg="blue.600" borderRadius="lg" />
+              <Text fontWeight="extrabold" fontSize="xl" letterSpacing="tighter" color={textColor}>Boardify</Text>
+            </Flex>
+
+            <Text fontSize="sm" color="gray.500">
+              © 2024 Boardify. High-performance creative tools.
+            </Text>
+
+            <Stack direction="row" spacing={6}>
+              <Icon as={FaGithub} boxSize={6} color="gray.400" cursor="pointer" _hover={{ color: "blue.500" }} transition="colors 0.2s" />
+            </Stack>
+          </Flex>
+        </Container>
+      </Box>
+    </Box>
   );
 };
 

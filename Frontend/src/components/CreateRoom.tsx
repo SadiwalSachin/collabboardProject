@@ -4,7 +4,17 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setHostData } from "../redux/slices/hostData";
 import { LuDoorOpen } from "react-icons/lu";
-import { motion } from "framer-motion";
+import {
+  Box,
+  VStack,
+  Heading,
+  Text,
+  Input,
+  Button,
+  Icon,
+  useColorModeValue,
+  Flex
+} from "@chakra-ui/react";
 
 export interface roomData {
   roomName: string;
@@ -22,6 +32,8 @@ const CreateRoom: React.FC<CreateRoomProps> = ({ socket }) => {
   const navigate = useNavigate();
   const [roomName, setRoomName] = useState<string>("");
 
+  const cardBg = useColorModeValue("white", "gray.800");
+
   const createRoomHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const roomData: roomData = {
@@ -32,57 +44,61 @@ const CreateRoom: React.FC<CreateRoomProps> = ({ socket }) => {
     };
     dispatch(setHostData(roomData));
     socket.emit("createdRoomData", roomData);
-    console.log(roomData);
     navigate(`/${roomData.roomId}`);
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5 }}
-      className="flex flex-col items-center w-full max-w-md"
-    >
-      <form onSubmit={createRoomHandler} className="w-full">
-        <motion.div
-          whileHover={{ y: -5 }}
-          transition={{ duration: 0.2 }}
-          className="bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100"
-        >
-          <div className="text-center mb-6">
-            <motion.div
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              transition={{ duration: 0.2 }}
-              className="w-20 h-20 rounded-3xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center mx-auto mb-4 text-4xl text-white shadow-lg"
-            >
-              <LuDoorOpen />
-            </motion.div>
-            <h4 className="font-bold mb-2 text-gray-800 text-xl">Create Room</h4>
-            <p className="text-gray-600 text-base">Start a new collaboration space</p>
-          </div>
-
-          <motion.input
-            whileFocus={{ scale: 1.02 }}
-            type="text"
-            className="w-full mb-6 px-6 py-4 rounded-2xl border-2 border-gray-200 text-base transition-all duration-300 focus:border-green-500 focus:ring-4 focus:ring-green-500/20 focus:outline-none bg-gray-50 focus:bg-white"
-            placeholder="Enter room name"
-            name="roomName"
-            value={roomName}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRoomName(e.target.value)}
-            required
-          />
-
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            type="submit"
-            className="w-full px-6 py-4 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-600 border-0 text-base font-semibold text-white tracking-wide transition-all duration-300 shadow-lg hover:shadow-xl hover:from-green-600 hover:to-emerald-700"
+    <form onSubmit={createRoomHandler} style={{ width: '100%' }}>
+      <VStack spacing={6} w="full">
+        <Box textAlign="center" mb={2}>
+          <Flex
+            w={20}
+            h={20}
+            mx="auto"
+            mb={4}
+            bgGradient="linear(to-br, green.400, emerald.600)"
+            borderRadius="3xl"
+            align="center"
+            justify="center"
+            boxShadow="0 10px 20px -5px rgba(52, 211, 153, 0.4)"
+            color="white"
           >
-            CREATE ROOM
-          </motion.button>
-        </motion.div>
-      </form>
-    </motion.div>
+            <Icon as={LuDoorOpen} fontSize="4xl" />
+          </Flex>
+          <Heading size="lg" fontWeight="800" letterSpacing="tight">Create Room</Heading>
+          <Text color="gray.500" fontSize="sm">Start your futuristic collaboration</Text>
+        </Box>
+
+        <Input
+          placeholder="Enter room name"
+          size="lg"
+          h="60px"
+          borderRadius="2xl"
+          bg={useColorModeValue("gray.50", "whiteAlpha.50")}
+          border="2px solid"
+          borderColor="transparent"
+          _focus={{ borderColor: "green.400", bg: cardBg, boxShadow: "0 0 0 4px rgba(72, 187, 120, 0.15)" }}
+          value={roomName}
+          onChange={(e) => setRoomName(e.target.value)}
+          required
+        />
+
+        <Button
+          type="submit"
+          w="full"
+          h="60px"
+          size="lg"
+          colorScheme="green"
+          borderRadius="2xl"
+          fontWeight="bold"
+          boxShadow="0 15px 30px -10px rgba(72, 187, 120, 0.4)"
+          _hover={{ transform: 'translateY(-2px)' }}
+          _active={{ transform: 'scale(0.98)' }}
+        >
+          CREATE SPACE
+        </Button>
+      </VStack>
+    </form>
   );
 };
 
