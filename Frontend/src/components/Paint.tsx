@@ -124,7 +124,7 @@ export const Paint: React.FC = React.memo(function Paint() {
   useEffect(() => {
     const fetchDrawing = async () => {
       try {
-        const response = await axios.get(`${ENDPOINT}/api/drawings/room/${roomId}`);
+        const response = await axios.get(`${ENDPOINT}/drawings/room/${roomId}`);
         if (response.data) {
           setScribbles(response.data.elements || []);
           setBoardName(response.data.name || "Untitled Board");
@@ -143,7 +143,7 @@ export const Paint: React.FC = React.memo(function Paint() {
       // Generate thumbnail
       const thumbnail = stageRef?.current?.toDataURL();
 
-      await axios.post(`${ENDPOINT}/api/drawings/save`, {
+      await axios.post(`${ENDPOINT}/drawings/save`, {
         roomId,
         elements: scribbles,
         name: boardName,

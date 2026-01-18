@@ -38,7 +38,7 @@ const Signup: React.FC = () => {
       const result = await signInWithPopup(auth, googleProvider);
       const token = await result.user.getIdToken();
 
-      const res = await axios.post(`${ENDPOINT}/api/users/sync`, {}, {
+      const res = await axios.post(`${ENDPOINT}/users/sync`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -80,7 +80,7 @@ const Signup: React.FC = () => {
 
     setIsLoading(true);
     try {
-      const res = await axios.post(`${ENDPOINT}/api/users/register`, {
+      const res = await axios.post(`${ENDPOINT}/users/register`, {
         name,
         email,
         password

@@ -150,7 +150,7 @@ const Dashboard: React.FC = () => {
         if (!user) return;
         try {
             const token = await getIdToken();
-            const response = await axios.get(`${ENDPOINT}/api/drawings/my-boards`, {
+            const response = await axios.get(`${ENDPOINT}/drawings/my-boards`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setBoards(response.data);
@@ -231,7 +231,7 @@ const Dashboard: React.FC = () => {
         setIsCreating(true);
         try {
             const token = await getIdToken();
-            await axios.post(`${ENDPOINT}/api/drawings/save`, {
+            await axios.post(`${ENDPOINT}/drawings/save`, {
                 roomId: generatedRoomId,
                 name: boardName.trim(),
                 elements: []
